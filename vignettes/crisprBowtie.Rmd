@@ -1,0 +1,166 @@
+---
+title: "crisprBowtie: alignment of gRNA spacer sequences using bowtie"
+author: 
+- name: Jean-Philippe Fortin
+  affiliation: Department of Data Science and Statistical Computing, gRED, 
+   Genentech
+  email: fortin946@gmail.com
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc_float: true
+#    theme: paper
+    number_sections: true
+vignette: >
+  %\VignetteIndexEntry{Introduction to crisprBowtie}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+bibliography: references.bib
+---
+
+
+# Overview of crisprBowtie
+
+`crisprBowtie` provides two main functions to align short sequences to an
+indexed genome in R using bowtie: `runBowtie` and `runCrisprBowtie`. The latter
+function is specifically designed to map CRISPR guide RNA (gRNA) spacer 
+sequences given a predefined set of protospacer adjacent motif (PAM) sequences,
+e.g. NGG, NAG, and NGA for CRISPR/Cas9. The package depends on
+`RBowtie` to utilize the bowtie alignment machinery within R.
+
+More specifically, the `runCrisprBowtie` function was developed to provide 
+a fast and accurate alignment method of spacer sequences to annotate on- and
+off-targets of gRNAs designed by the `crisprDesign` package. While package
+developers might want to use `crisprBowtie` directly, most users might be
+happier if performing gRNA alignments using the user-friendly functions
+`getSpacerAlignments` and `addSpacerAlignments` in `crisprDesign`. 
+
+# Installation
+
+The packages depends  on the following R packages:
+
+- ```crisprBase```: utility functions for CRISPR-related manipulations and
+commonly-used CRISPR nuclease objects.
+- ```Rbowtie```: an R Bionconductor package [@hahne2013package] that provides a
+wrapper around the popular bowtie short read aligner [@langmead2009bowtie].
+
+
+
+
+
+# Building a bowtie index
+
+The `Rbowtie` package provides the function `bowtie_build` to build a bowtie
+index from any custom genome,. provided that a fasta file exists.
+
+As an example, we build a bowtie index for a small portion of the human
+chromosome 1 (`chr1.fa` file provided in the `crisprBowtie` package) and
+save the index file as `myIndex` to a temporary directory:
+
+```{r}
+library(Rbowtie)
+fasta <- file.path(find.package("crisprBowtie"), "example/chr1.fa")
+tempDir <- tempdir()
+Rbowtie::bowtie_build(fasta,
+                      outdir=tempDir,
+                      force=TRUE,
+                      prefix="myIndex")
+```
+
+# Alignment using `runCrisprBowtie`
+
+As an example, we align 6 spacer sequences (of length 20bp) to the
+custom genome built above, allowing a maximum of 3 mismatches between the 
+spacer and protospacer sequences. 
+We specify that the search is for wildtype Cas9 (SpCas9) protospacers
+by providing the `CrisprNuclease` object `SpCas9` available through the 
+`crisprBase` package. The argument `canonical=FALSE` specifies that 
+non-canonical PAM sequences are also considered (NAG and NGA for SpCas9).
+The function `getAvailableCrisprNucleases` in `crisprBase` returns a character
+vector of available `crisprNuclease` objects found in `crisprBase`. 
+
+```{r}
+library(crisprBowtie)
+crisprNuclease <- crisprBase::SpCas9
+spacers <- c("TCCGCGGGCGACAATGGCAT",
+             "TGATCCCGCGCTCCCCGATG",
+             "CCGGGAGCCGGGGCTGGACG",
+             "CCACCCTCAGGTGTGCGGCC",
+             "CGGAGGGCTGCAGAAAGCCT",
+             "GGTGATGGCGCGGGCCGGGC")
+runCrisprBowtie(spacers,
+                crisprNuclease=crisprNuclease,
+                n_mismatches=3,
+                canonical=FALSE,
+                bowtie_index=file.path(tempDir, "myIndex"))
+```
+
+
+
+# Applications beyond CRISPR
+
+The function `runBowtie` is similar to `runCrisprBowtie`,
+but does not impose constraints on PAM sequences.
+It can be used to search for any short read sequence in a genome.
+
+## Example using RNAi (siRNA design)
+
+Seed-related off-targets caused by mismatch tolerance outside of the
+seed region is a well-studied and characterized problem observed in RNA
+interference (RNA) experiments. `runBowtie` can be used to map shRNA/siRNA seed
+sequences to reference genomes to predict putative off-targets:
+
+```{r, eval=TRUE}
+seeds <- c("GTAAAGGT", "AAGGATTG")
+runBowtie(seeds,
+          n_mismatches=2,
+          bowtie_index=file.path(tempDir, "myIndex"))
+```
+
+
+# Setting up a bowtie indexes directory
+
+It can be annoying to specify the full path of the bowtie index every time
+one wishes to run an analysis. To alleviate that, `crisprBowtie` will search
+for bowtie indexes in a directory specified by a system environment variable
+called `BOWTIE_INDEXES`. 
+
+On MacOS/Unix, this can be specified by adding the following line to the
+`.bash_profile` file:
+
+```
+export BOWTIE_INDEXES=/Users/yourName/yourBowtieIndexesFolder
+```
+
+This allows to use shortcuts in `runCrisprBowtie` and `runBowtie` when 
+specifying `bowtie_index`. For instance, the following code
+
+```{r, eval=FALSE}
+runCrisprBowtie(spacers,
+                bowtie_index="hg38/hg38")
+```
+
+will search for a bowtie index at
+
+```
+/Users/yourName/yourBowtieIndexesFolder/hg38/hg38
+```
+
+See the `getBowtieIndexesDir` and `setBowtieIndexesDir` for more information.
+
+
+
+
+
+
+# Session info
+
+```{r}
+sessionInfo()
+```
+
+# References
+
+
+
+

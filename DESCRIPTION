@@ -1,0 +1,37 @@
+Package: crisprBowtie
+Version: 1.1.33
+Date: 2021-08-06
+Title: Bowtie-based alignment of CRISPR gRNA spacer sequences
+Authors@R: c(
+    person("Jean-Philippe", "Fortin", email = "fortin946@gmail.com", role = c("aut", "cre")))
+Depends:
+    methods
+Imports:
+    Biostrings (>= 2.61.1),
+    BSgenome (>= 1.61.0),
+    crisprBase,
+    IRanges (>= 2.27.0),
+    GenomicRanges (>= 1.45.0),
+    Rbowtie (>= 1.33.0),
+    S4Vectors (>= 0.31.0),	
+    stats,
+    stringr,
+    utils
+Suggests:
+    BiocStyle,
+    BSgenome.Hsapiens.UCSC.hg38,
+    knitr,
+    rmarkdown,
+    testthat
+biocViews:
+    CRISPR,
+    FunctionalGenomics,
+    Alignment
+Description: Provides a user-friendly interface to map on-targets and off-targets
+    of CRISPR gRNA spacer sequences using bowtie. The alignment is fast, 
+    and can be performed using either commonly-used or custom CRISPR nucleases.
+    The alignment can work with any reference genomes or custom genomes.
+License: MIT + file LICENSE
+Encoding: UTF-8
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
