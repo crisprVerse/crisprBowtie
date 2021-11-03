@@ -39,9 +39,9 @@ happier if performing gRNA alignments using the user-friendly functions
 
 The packages depends  on the following R packages:
 
-- ```crisprBase```: utility functions for CRISPR-related manipulations and
+- `crisprBase`: utility functions for CRISPR-related manipulations and
 commonly-used CRISPR nuclease objects.
-- ```Rbowtie```: an R Bionconductor package [@hahne2013package] that provides a
+- `Rbowtie`: an R Bionconductor package [@hahne2013package] that provides a
 wrapper around the popular bowtie short read aligner [@langmead2009bowtie].
 
 
