@@ -54,7 +54,7 @@
 #' @importFrom BSgenome getSeq
 #' @importFrom crisprBase extractPamFromProtospacer
 #' @importFrom crisprBase extractSpacerFromProtospacer
-#' @importFrom crisprBase name pams pamLength pamIndices
+#' @importFrom crisprBase nucleaseName pams pamLength pamIndices
 #' @importFrom crisprBase spacerLength spacerLength<- spacerSide
 runCrisprBowtie <- function(spacers, 
                             mode=c("protospacer", "spacer"),
@@ -87,7 +87,7 @@ runCrisprBowtie <- function(spacers,
     }
     if (verbose){
         cat(paste0("[runCrisprBowtie] Searching for ",
-                   name(crisprNuclease), " protospacers \n"))
+                   nucleaseName(crisprNuclease), " protospacers \n"))
     }
 
     # Getting nuclease info:
