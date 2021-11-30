@@ -18,7 +18,7 @@ utils::globalVariables(c('.', "SpCas9", "AsCas12a"))
     return(crisprNuclease)
 }
 
-
+#' @importFrom utils data
 .getDefaultCrisprNuclease <- function(type=c("Cas9", "Cas12a")){
     type <- match.arg(type)
     if (type=="Cas9"){
