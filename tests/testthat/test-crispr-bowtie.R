@@ -12,6 +12,8 @@ Rbowtie::bowtie_build(fasta,
                       prefix="tempIndex")
 index <- file.path(outdir, "tempIndex")
 
+data(SpCas9, package="crisprBase")
+data(AsCas12a, package="crisprBase")
 Cas9 <- SpCas9
 Cas12a <- AsCas12a
 

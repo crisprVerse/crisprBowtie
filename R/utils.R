@@ -3,14 +3,7 @@ NULL
 
 N_MAX_MISMATCHES <- 3
 
-utils::globalVariables(c('.'))
-
-
-data(SpCas9, package="crisprBase")
-data(AsCas12a, package="crisprBase")
-
-.default_crispr_nuclease_cas9   <- SpCas9
-.default_crispr_nuclease_cas12a <- AsCas12a
+utils::globalVariables(c('.', "SpCas9", "AsCas12a"))
 
 
 #' @importFrom methods is
@@ -26,13 +19,18 @@ data(AsCas12a, package="crisprBase")
 }
 
 
-
 .getDefaultCrisprNuclease <- function(type=c("Cas9", "Cas12a")){
     type <- match.arg(type)
     if (type=="Cas9"){
-        nuc <- .default_crispr_nuclease_cas9
+        data("SpCas9",
+             package="crisprBase",
+             envir=environment())
+        nuc <- SpCas9
     } else {
-        nuc <- .default_crispr_nuclease_cas12a
+        data("AsCas12a",
+             package="crisprBase",
+             envir=environment())
+        nuc <- AsCas12a
     }
     return(nuc)
 }
