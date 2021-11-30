@@ -81,7 +81,8 @@ vector of available `crisprNuclease` objects found in `crisprBase`.
 
 ```{r}
 library(crisprBowtie)
-crisprNuclease <- crisprBase::SpCas9
+data(SpCas9, package="crisprBase")
+crisprNuclease <- SpCas9
 spacers <- c("TCCGCGGGCGACAATGGCAT",
              "TGATCCCGCGCTCCCCGATG",
              "CCGGGAGCCGGGGCTGGACG",

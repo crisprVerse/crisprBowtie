@@ -43,10 +43,11 @@
 #' index <- file.path(outdir, "tempIndex")
 #' seqs <- c("GGAAATTCCCCCAGTGGCGC",
 #'           "ACACAGCTGCGGACAGGGCC")
+#' data(SpCas9, package="crisprBase")
 #' results <- runCrisprBowtie(seqs,
 #'                            bowtie_index=index,
 #'                            n_mismatches=2,
-#'                            crisprNuclease=crisprBase::SpCas9)
+#'                            crisprNuclease=SpCas9)
 #' 
 #' @author Jean-Philippe Fortin
 #' 

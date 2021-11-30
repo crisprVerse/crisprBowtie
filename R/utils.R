@@ -5,8 +5,12 @@ N_MAX_MISMATCHES <- 3
 
 utils::globalVariables(c('.'))
 
-.default_crispr_nuclease_cas9   <- crisprBase::SpCas9
-.default_crispr_nuclease_cas12a <- crisprBase::AsCas12a
+
+data(SpCas9, package="crisprBase")
+data(AsCas12a, package="crisprBase")
+
+.default_crispr_nuclease_cas9   <- SpCas9
+.default_crispr_nuclease_cas12a <- AsCas12a
 
 
 #' @importFrom methods is
