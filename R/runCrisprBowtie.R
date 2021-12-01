@@ -57,6 +57,7 @@
 #' @importFrom crisprBase extractSpacerFromProtospacer
 #' @importFrom crisprBase nucleaseName pams pamLength pamIndices
 #' @importFrom crisprBase spacerLength spacerLength<- spacerSide
+#' @importFrom crisprBase hasSpacerGap
 runCrisprBowtie <- function(spacers, 
                             mode=c("protospacer", "spacer"),
                             bowtie_index=NULL,
@@ -73,6 +74,10 @@ runCrisprBowtie <- function(spacers,
     #Checking inputs:
     mode     <- match.arg(mode)
     crisprNuclease <- .validateCrisprNuclease(crisprNuclease)
+    if (hasSpacerGap(crisprNuclease)){
+        stop("CRISPR nucleases with spacer gaps are not ",
+             "supported at the moment.")
+    }
     if (mode=="spacer"){
         bsgenome <- .validateBSGenome(bsgenome)
     }
@@ -308,7 +313,7 @@ runCrisprBowtie <- function(spacers,
         out <- split(out, f=mcols(out)[["spacer"]])
     }
     return(out)
-}   
+}
 
 
 
