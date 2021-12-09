@@ -196,9 +196,12 @@ runCrisprBowtie <- function(spacers,
             aln <- aln[-bad,,drop=FALSE]
         }
         if (nrow(aln)>0){
-            aln$pam       <- extractPamFromProtospacer(aln$target,crisprNuclease)
-            aln$target    <- extractSpacerFromProtospacer(aln$target, crisprNuclease)
-            aln$query     <- extractSpacerFromProtospacer(aln$query, crisprNuclease)
+            aln$pam    <- extractPamFromProtospacer(aln$target,
+                                                    crisprNuclease)
+            aln$target <- extractSpacerFromProtospacer(aln$target,
+                                                       crisprNuclease)
+            aln$query  <- extractSpacerFromProtospacer(aln$query,
+                                                       crisprNuclease)
             aln$canonical <- aln$pam %in% pams.canonical
         } 
     }
