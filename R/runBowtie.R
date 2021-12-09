@@ -39,17 +39,21 @@
 #' @importFrom stringr str_split
 #' @export
 runBowtie <- function(sequences, 
-                      bowtie_index=NULL,
+                      bowtie_index,
                       n_mismatches=0,
                       all_alignments=TRUE,
                       n_max_alignments=1000,
-                      verbose=TRUE){    
+                      verbose=TRUE
+){    
     .checkNMismatches(n_mismatches)
     # Note: bowtie is based on python,
     # so index is 0-based instead of 1-based
     sequences <- unique(sequences)
-    bowtie_index <- .validateBowtieIndex(bowtie_index,
-                                         verbose=verbose)
+    if (is.null(bowtie_index)){
+        stop("bowtie_index must be provided.")
+    }
+    bowtie_index <- .validateBowtieIndex(bowtie_index)
+                                         
     
     # Generating alignments:
     input <- .fastqfy(sequences,

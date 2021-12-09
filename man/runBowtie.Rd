@@ -6,7 +6,7 @@
 \usage{
 runBowtie(
   sequences,
-  bowtie_index = NULL,
+  bowtie_index,
   n_mismatches = 0,
   all_alignments = TRUE,
   n_max_alignments = 1000,

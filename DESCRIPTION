@@ -1,6 +1,6 @@
 Package: crisprBowtie
-Version: 1.1.37
-Date: 2021-11-29
+Version: 0.99.0
+Date: 2021-12-09
 Title: Bowtie-based alignment of CRISPR gRNA spacer sequences
 Authors@R: c(
     person("Jean-Philippe", "Fortin", email = "fortin946@gmail.com", role = c("aut", "cre")))
@@ -27,7 +27,7 @@ biocViews: CRISPR, FunctionalGenomics, Alignment
 Description: Provides a user-friendly interface to map on-targets and off-targets
     of CRISPR gRNA spacer sequences using bowtie. The alignment is fast, 
     and can be performed using either commonly-used or custom CRISPR nucleases.
-    The alignment can work with any reference genomes or custom genomes.
+    The alignment can work with any reference or custom genomes.
 License: MIT + file LICENSE
 Encoding: UTF-8
 RoxygenNote: 7.1.2

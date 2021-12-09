@@ -83,6 +83,12 @@ runCrisprBowtie <- function(spacers,
     }
     
 
+    if (is.null(bowtie_index)){
+        stop("bowtie_index must be provided.")
+    }
+    bowtie_index <- .validateBowtieIndex(bowtie_index)
+    
+
     # Checking mode arguments:
     if (mode=="spacer" & is.null(bsgenome)){
         stop("In 'spacer' mode, a BSgenome object must be provided using",

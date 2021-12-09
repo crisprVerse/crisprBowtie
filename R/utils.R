@@ -97,3 +97,19 @@ utils::globalVariables(c('.', "SpCas9", "AsCas12a"))
 
 
 
+.validateBowtieIndex <- function(bowtie_index){
+    suffixes_fwd <- paste0(".", seq_len(4), ".ebwt")
+    suffixes_rev <- paste0(".rev.", seq_len(2), ".ebwt")
+    suffixes <- c(suffixes_fwd, suffixes_rev)
+    files   <- paste0(bowtie_index, suffixes)
+    missing <- files[!file.exists(files)]
+    if (length(missing)>0){
+        missing <- paste0(missing, collapse="\n") 
+        stop("The following files needed for bowtie",
+             " are missing: \n", missing)
+    }
+    return(bowtie_index)
+}
+
+
+
