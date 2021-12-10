@@ -9,7 +9,7 @@ Depends:
 Imports:
     Biostrings,
     BSgenome,
-    crisprBase (>= 0.99.3),
+    crisprBase (>= 0.99.7),
     IRanges,
     GenomicRanges,
     Rbowtie,
