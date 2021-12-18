@@ -19,39 +19,44 @@ bibliography: references.bib
 ---
 
 
-# Overview of crisprBowtie
-
-`crisprBowtie` provides two main functions to align short sequences to an
-indexed genome in R using bowtie: `runBowtie` and `runCrisprBowtie`. The latter
-function is specifically designed to map CRISPR guide RNA (gRNA) spacer 
-sequences given a predefined set of protospacer adjacent motif (PAM) sequences,
-e.g. NGG, NAG, and NGA for CRISPR/Cas9. The package depends on
-`RBowtie` to utilize the bowtie alignment machinery within R.
-
-More specifically, the `runCrisprBowtie` function was developed to provide 
-a fast and accurate alignment method of spacer sequences to annotate on- and
-off-targets of gRNAs designed by the `crisprDesign` package. While package
-developers might want to use `crisprBowtie` directly, most users might be
-happier if performing gRNA alignments using the user-friendly functions
-`getSpacerAlignments` and `addSpacerAlignments` in `crisprDesign`. 
 
 # Installation
 
-The packages depends  on the following R packages:
+`crisprBowtie` can be installed from Bioconductor using the following
+commands in a fresh R session:
 
-- `crisprBase`: utility functions for CRISPR-related manipulations and
-commonly-used CRISPR nuclease objects.
-- `Rbowtie`: an R Bionconductor package [@hahne2013package] that provides a
-wrapper around the popular bowtie short read aligner [@langmead2009bowtie].
+```{r, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("crisprBowtie")
+```
 
 
+# Overview of crisprBowtie
 
+`crisprBowtie` provides two main functions to align short DNA sequences to
+a reference genome using the short read aligner bowtie [@langmead2009bowtie]
+and return the alignments as R objects: `runBowtie` and `runCrisprBowtie`.
+It utilizes the Bioconductor package `Rbowtie` to access the bowtie program
+in a platform-independent manner. This means that users do not need to install
+bowtie prior to using `crisprBowtie`. 
+
+
+The latter function (`runCrisprBowtie`) is specifically designed
+to map and annotate CRISPR guide RNA (gRNA) spacer sequences using
+CRISPR nuclease objects and CRISPR genomic arithmetics defined in
+the Bioconductor `crisprBase` package. This enables a fast and accurate
+on-target and off-target search of gRNA spacer sequences for virtually any
+type of CRISPR nucleases. 
 
 
 # Building a bowtie index
 
-The `Rbowtie` package provides the function `bowtie_build` to build a bowtie
-index from any custom genome,. provided that a fasta file exists.
+To use `runBowtie` or `runCrisprBowtie`, users need to first build a bowtie
+genome index. For a given genome, this step has to be done only once. 
+The `Rbowtie` package convenitenly provides the function `bowtie_build`
+to build a bowtie index from any custom genome from a FASTA file.
 
 As an example, we build a bowtie index for a small portion of the human
 chromosome 1 (`chr1.fa` file provided in the `crisprBowtie` package) and
@@ -72,7 +77,8 @@ Rbowtie::bowtie_build(fasta,
 As an example, we align 6 spacer sequences (of length 20bp) to the
 custom genome built above, allowing a maximum of 3 mismatches between the 
 spacer and protospacer sequences. 
-We specify that the search is for wildtype Cas9 (SpCas9) protospacers
+
+We specify that the search is for the wildtype Cas9 (SpCas9) nuclease
 by providing the `CrisprNuclease` object `SpCas9` available through the 
 `crisprBase` package. The argument `canonical=FALSE` specifies that 
 non-canonical PAM sequences are also considered (NAG and NGA for SpCas9).
@@ -117,37 +123,6 @@ runBowtie(seeds,
           n_mismatches=2,
           bowtie_index=file.path(tempDir, "myIndex"))
 ```
-
-
-# Setting up a bowtie indexes directory
-
-It can be annoying to specify the full path of the bowtie index every time
-one wishes to run an analysis. To alleviate that, `crisprBowtie` will search
-for bowtie indexes in a directory specified by a system environment variable
-called `BOWTIE_INDEXES`. 
-
-On MacOS/Unix, this can be specified by adding the following line to the
-`.bash_profile` file:
-
-```
-export BOWTIE_INDEXES=/Users/yourName/yourBowtieIndexesFolder
-```
-
-This allows to use shortcuts in `runCrisprBowtie` and `runBowtie` when 
-specifying `bowtie_index`. For instance, the following code
-
-```{r, eval=FALSE}
-runCrisprBowtie(spacers,
-                bowtie_index="hg38/hg38")
-```
-
-will search for a bowtie index at
-
-```
-/Users/yourName/yourBowtieIndexesFolder/hg38/hg38
-```
-
-See the `getBowtieIndexesDir` and `setBowtieIndexesDir` for more information.
 
 
 
