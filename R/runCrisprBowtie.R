@@ -1,40 +1,63 @@
-#' @title Find gRNA spacer alignments with bowtie
-#' @description Return bowtie alignments for a list of gRNA spacer sequences.
+#' @title Perform CRISPR gRNA spacer alignment with bowtie
+#' @description Perform CRISPR gRNA spacer alignment with bowtie.
 #' 
-#' @param spacers Character vector of DNA sequences corresponding
-#'     to gRNA spacer sequences. Must all be of equal length. 
+#' @param spacers Character vector specifying gRNA spacer sequences.
+#'     Sequences must all be of equal length. 
 #' @param mode String specifying which alignment mode should be used:
-#'     \code{protospacer} or \code{spacer}. In spacer mode, sequences are
-#'     aligned to the genome without PAM (spacer only). In protospacer mode,
-#'     sequences are aligned with all valid PAM sequences appended
-#'     (spacer + PAM). Valid PAMs depend on the \code{canonical} and 
-#'     \code{ignore_pam} user inputs. Spacer mode is recommended
-#'     for alignments with a large number of potental PAM sequences
-#'     such as non-canonical Cas9 PAM sequences, and especially
-#'     non-canonical Cas12a PAM sequences. 
-#' @param bsgenome BSgenome object to be used in spacer mode. 
-#' @param bowtie_index Path to the bowtie index to be used for alignment.
-#' @param crisprNuclease \code{CrisprNuclease} object. 
+#'     \code{protospacer} or \code{spacer}. 
+#' @param bowtie_index String specifying path to a bowtie index.
+#' @param bsgenome A \linkS4class{BSgenome} object.
+#'     Must be provided if \code{mode} is "spacer".
+#' @param crisprNuclease A \linkS4class{CrisprNuclease} object. 
 #' @param canonical Should only canonical PAM sequences be considered?
 #'     TRUE by default.
-#' @param ignore_pam If TRUE, will return all matches regardless of
-#'     PAM sequence. FALSE by default.
-#' @param n_mismatches Integer between 0 and 3 specifying maximum
-#'     number of mismatches allowed between spacer and protospacer sequences.
+#' @param ignore_pam Should PAM sequences be ignore?
+#'     If TRUE, all alignments are returned regardless of PAM tolerance.
+#'     FALSE by default.
+#' @param n_mismatches Integer between 0 and 3 specifying maximum number
+#'     of mismatches allowed between spacer sequences and target DNA.
+#'     0 by default. 
 #' @param all_alignments Should all possible alignments be returned?
 #'     TRUE by default. 
 #' @param n_max_alignments Maximum number of alignments to return if
 #'     \code{all_alignments} is FALSE. 1000 by default. 
 #' @param force_spacer_length Should the spacer length be overwritten in the
-#'     crisprNuclease object? FALSE by default. 
-#' @param verbose Should messages be printed to the consolde? TRUE by default.
-#' @return \strong{runBowtie} returns spacer alignment data, including genomic 
-#'     coordinates and sequence, and position of mismatches relative
-#'     to \code{pam_site}.
+#'     \code{crisprNuclease} object? FALSE by default. 
+#' @param verbose Should messages be printed to the console? TRUE by default.
 #' 
-#' @details \code{runCrisprBowtie} is similar to \code{runBowtie}, with the 
-#'     addition of imposing constraints on PAM sequences such that the query
-#'     sequences are valid protospacer sequences in the searched genome. 
+#' @return A data.frame of the spacer alignments with the following columns:
+#'    \itemize{
+#'        \item \code{spacer} — string specifying gRNA spacer sequence
+#'        \item \code{protospacer} — string specifying target protospacer sequence
+#'        \item \code{pam} — string specifying target PAM sequence
+#'        \item \code{chr} - string specifying chromosome name
+#'        \item \code{pam_site} - string specifying genomic coordinate of the
+#'              first nucleotide of the PAM sequence.
+#'        \item \code{strand} - string specifying strand ("+" or "-") 
+#'        \item \code{n_mismatches} - integer specifying number of mismatches
+#'              between spacer and protospacer sequences
+#'        \item \code{mm1} - position of the first mismatch. NA if none.
+#'        \item \code{mm2} - position of the second mismatch. NA if none.
+#'        \item \code{mm3} - position of the third mismatch. NA if none.
+#'        \item \code{mmnuc1} - nucleotide in target space of the first mismatch.
+#'        \item \code{mmnuc2} - nucleotide in target space of the second mismatch.
+#'        \item \code{mmnuc3} - nucleotide in target space of the third mismatch.
+#'        \item \code{canonical} - logical indicating whether or not PAM sequence
+#'              is canonical. 
+#'    }
+#'     
+#' 
+#' @details When \code{mode} is "spacer", spacer sequences are aligned to the
+#'     genome without appending PAM sequences first. This requires the
+#'     specification of a \linkS4class{BSgenome} object through the argument
+#'     \code{bsgenome} to validate that the aligned spacer sequences are
+#'     adjacent to valid PAM sequences. 
+#'     
+#'     When \code{mode} is "protospacer", sequences are aligned with all
+#'     valid PAM sequences appended (spacer + PAM). The set of valid PAM
+#'     sequences depend on the inputs  \code{canonical} and \code{ignore_pam}.
+#'     This is faster than the "spacer" mode if the number of possible
+#'     PAM sequences is small (e.g. SpCas9).
 #' 
 #' @examples
 #' fasta <- system.file(package="crisprBowtie", "example/chr1.fa")
@@ -48,6 +71,8 @@
 #'                            bowtie_index=index,
 #'                            n_mismatches=2,
 #'                            crisprNuclease=SpCas9)
+#' 
+#' @seealso \code{link{runBowtie}} to map general DNA sequences.
 #' 
 #' @author Jean-Philippe Fortin
 #' 

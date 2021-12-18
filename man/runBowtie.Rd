@@ -2,7 +2,7 @@
 % Please edit documentation in R/runBowtie.R
 \name{runBowtie}
 \alias{runBowtie}
-\title{Run bowtie short-read aligner (ungapped alignments)}
+\title{Perform short sequence alignment with bowtie}
 \usage{
 runBowtie(
   sequences,
@@ -16,12 +16,11 @@ runBowtie(
 \arguments{
 \item{sequences}{Character vector of DNA sequences.}
 
-\item{bowtie_index}{Path to the bowtie genome index to be used
-for alignment.}
+\item{bowtie_index}{String specifying path to a bowtie index.}
 
 \item{n_mismatches}{Integer between 0 and 3 specifying maximum number
-of mismatches allowed between the query sequences and the
-index sequences.}
+of mismatches allowed between query sequences and target DNA.
+0 by default.}
 
 \item{all_alignments}{Should all possible alignments be returned?
 TRUE by default.}
@@ -29,20 +28,34 @@ TRUE by default.}
 \item{n_max_alignments}{Maximum number of alignments to return if
 \code{all_alignments} is FALSE. 1000 by default.}
 
-\item{verbose}{Should messages be printed to the consolde? TRUE by default.}
+\item{verbose}{Should messages be printed to the console?
+TRUE by default.}
 }
 \value{
-\strong{runBowtie} returns sequence alignment data, 
-    including genomic coordinates and sequence, and position of 
-    mismatches relative to the sstart of the sequence.
+A data.frame of the alignments with the following columns:
+   \itemize{
+       \item \code{query} — string specifying query DNA sequence
+       \item \code{target} — string specifying target DNA sequence
+       \item \code{chr} - string specifying chromosome name
+       \item \code{pos} - string specifying genomic coordinate of the start
+             of the target DNA sequence
+       \item \code{strand} - string specifying strand ("+" or "-") 
+       \item \code{n_mismatches} - integer specifying number of mismatches
+             between query and target sequences
+       \item \code{mm1} - position of the first mismatch. NA if none.
+       \item \code{mm2} - position of the second mismatch. NA if none.
+       \item \code{mm3} - position of the third mismatch. NA if none.
+       \item \code{mmnuc1} - nucleotide in target space of the first mismatch.
+       \item \code{mmnuc2} - nucleotide in target space of the second mismatch.
+       \item \code{mmnuc3} - nucleotide in target space of the third mismatch.
+   }
 }
 \description{
-Return bowtie alignments for a list of short sequences
-    for a prebuilt bowtie index.
+Perform short sequence alignment with bowtie.
 }
 \details{
-\code{runBowtie} can be used to search for any short read
-    sequence in a reference genome. To search for sequences while imposing
+\code{runBowtie} can be used to map short DNA sequences 
+    to a reference genome. To search for sequences while imposing
     constraints on PAM sequences (such as gRNA spacer sequences), see
     \code{runCrisprBowtie} instead.
 }
@@ -56,6 +69,10 @@ seqs <- c("GGAAGT",
           "GTGTGC") 
 results <- runBowtie(seqs, bowtie_index=index, n_mismatches=2)
 
+
+}
+\seealso{
+\code{link{runCrisprBowtie}} to map gRNA spacer sequences.
 }
 \author{
 Jean-Philippe Fortin
