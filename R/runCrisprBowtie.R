@@ -323,11 +323,7 @@ runCrisprBowtie <- function(spacers,
     pam.len  <- pamLength(crisprNuclease)
     spacer.side <- spacerSide(crisprNuclease)
     gr <- GRanges(chr, IRanges(pam_site, width=1), strand=strand)
-    if (spacer.side=="5prime"){
-        gr <- promoters(gr, downstream=pam.len, upstream=0)
-    } else {
-        gr <- promoters(gr, downstream=pam.len, upstream=0)
-    }
+    gr <- promoters(gr, downstream=pam.len, upstream=0)
     return(gr)
 }
 
