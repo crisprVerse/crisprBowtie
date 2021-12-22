@@ -81,8 +81,8 @@
 #' @importFrom crisprBase extractPamFromProtospacer
 #' @importFrom crisprBase extractSpacerFromProtospacer
 #' @importFrom crisprBase nucleaseName pams pamLength pamIndices
-#' @importFrom crisprBase spacerLength spacerLength<- spacerSide
-#' @importFrom crisprBase hasSpacerGap
+#' @importFrom crisprBase spacerLength spacerLength<- pamSide
+#' @importFrom crisprBase hasSpacerGap isRnase
 runCrisprBowtie <- function(spacers, 
                             mode=c("protospacer", "spacer"),
                             bowtie_index=NULL,
@@ -99,6 +99,9 @@ runCrisprBowtie <- function(spacers,
     #Checking inputs:
     mode     <- match.arg(mode)
     crisprNuclease <- .validateCrisprNuclease(crisprNuclease)
+    if (isRnase(crisprNuclease)){
+        stop("RNA-targeting CRISPR nucleases are not supported yet.")
+    }
     if (hasSpacerGap(crisprNuclease)){
         stop("CRISPR nucleases with spacer gaps are not ",
              "supported at the moment.")
@@ -129,7 +132,7 @@ runCrisprBowtie <- function(spacers,
 
     # Getting nuclease info:
     pam.len     <- pamLength(crisprNuclease)
-    spacer.side <- spacerSide(crisprNuclease) 
+    pam.side <- pamSide(crisprNuclease) 
     spacer.len  <- unique(nchar(spacers))
 
     if (length(spacer.len)>1){
@@ -170,7 +173,7 @@ runCrisprBowtie <- function(spacers,
     if (mode=="spacer"){
         sequences <- spacers
     } else {
-        if (spacer.side=="5prime"){
+        if (pam.side=="3prime"){
             protospacers <- lapply(possiblePams, function(x){
                 paste0(spacers, x)
             })
@@ -236,7 +239,7 @@ runCrisprBowtie <- function(spacers,
         aln <- .emptyAlignments()
     } else {
         #Changing relative position of mismatch
-        if (spacer.side=="3prime" & mode=="protospacer"){
+        if (pam.side=="5prime" & mode=="protospacer"){
             wh <- paste0("mm", seq_len(N_MAX_MISMATCHES))
             aln[, wh] <- aln[, wh]-pam.len
         }
@@ -276,7 +279,7 @@ runCrisprBowtie <- function(spacers,
 }
 
 
-#' @importFrom crisprBase pamLength spacerSide
+#' @importFrom crisprBase pamLength pamSide
 .getPamSiteFromBowtieOutput <- function(pos, 
                                         strand,
                                         spacer.len,
@@ -286,9 +289,9 @@ runCrisprBowtie <- function(spacers,
     mode <- match.arg(mode)
     crisprNuclease <- .validateCrisprNuclease(crisprNuclease)
     pam.len  <- pamLength(crisprNuclease)
-    spacer.side <- spacerSide(crisprNuclease)
+    pam.side <- pamSide(crisprNuclease)
     wh <- which(strand=="-")
-    if (spacer.side=="5prime"){
+    if (pam.side=="3prime"){
         pam_site <- pos + spacer.len
         if (length(wh)>0){
             pam_site[wh] <- pos[wh] - 1
@@ -313,7 +316,7 @@ runCrisprBowtie <- function(spacers,
 
 #' @importFrom GenomicRanges GRanges
 #' @importFrom IRanges IRanges promoters
-#' @importFrom crisprBase pamLength spacerSide
+#' @importFrom crisprBase pamLength
 .getBowtiePamRanges <- function(chr,
                                 pam_site,
                                 strand,
@@ -321,7 +324,6 @@ runCrisprBowtie <- function(spacers,
 ){
     crisprNuclease <- .validateCrisprNuclease(crisprNuclease)
     pam.len  <- pamLength(crisprNuclease)
-    spacer.side <- spacerSide(crisprNuclease)
     gr <- GRanges(chr, IRanges(pam_site, width=1), strand=strand)
     gr <- promoters(gr, downstream=pam.len, upstream=0)
     return(gr)
