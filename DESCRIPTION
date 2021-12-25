@@ -10,10 +10,9 @@ Imports:
     Biostrings,
     BSgenome,
     crisprBase (>= 0.99.7),
-    IRanges,
     GenomicRanges,
+    IRanges,
     Rbowtie,
-    S4Vectors,
     stats,
     stringr,
     utils

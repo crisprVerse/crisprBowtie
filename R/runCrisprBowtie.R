@@ -332,21 +332,6 @@ runCrisprBowtie <- function(spacers,
 
 
 
-#' @importFrom S4Vectors split mcols<- mcols
-#' @importFrom GenomicRanges GRanges
-#' @importFrom IRanges IRanges
-.converToGRanges <- function(aln, collapse=TRUE){
-    out <- GRanges(aln$chr,
-                   IRanges(start=aln$pam_site,
-                           width=1),
-                   strand=aln$strand)
-    mcols(out) <- aln
-    if (!collapse){
-        out <- split(out, f=mcols(out)[["spacer"]])
-    }
-    return(out)
-}
-
 
 
 

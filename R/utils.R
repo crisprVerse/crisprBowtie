@@ -37,25 +37,17 @@ utils::globalVariables(c('.', "SpCas9", "AsCas12a"))
 
 
 #' @importFrom methods is
-.validateBSGenome <- function(genome){
-    if (is.null(genome)){
-        bsgenome <- .getDefaultBSGenome()
+.validateBSGenome <- function(bsgenome){
+    if (is.null(bsgenome)){
+        stop("Provided bsgenome argument cannot be NULL.")
     } else {
         if (!is(bsgenome, "BSgenome")){
-            stop("Provided genome must be a 'BSgenome' object. ")
+            stop("Provided bsgenome argument must be a 'BSgenome' object. ")
         }
     }
     return(bsgenome)
 }
 
-.getDefaultBSGenome <- function(){
-    if (requireNamespace("BSgenome.Hsapiens.UCSC.hg38")){
-        x <- BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38 
-    } else {
-        x <- NULL
-    }
-    return(x)
-}
 
 
 
