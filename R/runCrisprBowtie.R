@@ -72,7 +72,7 @@
 #'                            n_mismatches=2,
 #'                            crisprNuclease=SpCas9)
 #' 
-#' @seealso \code{link{runBowtie}} to map general DNA sequences.
+#' @seealso \code{\link{runBowtie}} to map general DNA sequences.
 #' 
 #' @author Jean-Philippe Fortin
 #' 

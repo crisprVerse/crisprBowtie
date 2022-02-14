@@ -72,7 +72,7 @@ results <- runBowtie(seqs, bowtie_index=index, n_mismatches=2)
 
 }
 \seealso{
-\code{link{runCrisprBowtie}} to map gRNA spacer sequences.
+\code{\link{runCrisprBowtie}} to map gRNA spacer sequences.
 }
 \author{
 Jean-Philippe Fortin

@@ -108,7 +108,7 @@ results <- runCrisprBowtie(seqs,
 
 }
 \seealso{
-\code{link{runBowtie}} to map general DNA sequences.
+\code{\link{runBowtie}} to map general DNA sequences.
 }
 \author{
 Jean-Philippe Fortin
