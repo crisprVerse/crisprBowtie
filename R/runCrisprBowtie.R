@@ -180,7 +180,6 @@ runCrisprBowtie <- function(spacers,
     }
 
     # Performing alignment:
-    cat("Getting alignments \n")
     aln <- runBowtie(sequences=sequences, 
                      bowtie_index=bowtie_index, 
                      bsgenome=bsgenome,
