@@ -114,20 +114,6 @@ runBowtie <- function(sequences,
         return(NULL) 
     }  
 
-    # Reformatting data:
-    #results <- str_split(results, pattern="\t")
-    #results <- do.call("rbind", results)
-    #results <- as.data.frame(results, stringsAsFactors=FALSE)
-    #colnames(results) <- c("query", "strand", "chr", "pos",
-    #                       "target", "qc", "idk", "mismatches")
-    #cols    <- c("query", "chr", "pos", "strand", "mismatches")
-    #results <- results[,cols]
-    #results$query  <- as.character(results$query)
-    #results$chr    <- as.character(results$chr)
-    #results$strand <- as.character(results$strand)
-    #results$pos    <- as.numeric(results$pos)
-    #results$pos    <- results$pos+1 #since bowtie is 0-based
-    
     #cat("Getting DNA target \n")
     if (is.null(bsgenome)){
         results <- .getDNATargetFromMismatches(results, sequences)
@@ -141,6 +127,13 @@ runBowtie <- function(sequences,
               "chr", "pos", "strand",
               "n_mismatches")
     results <- results[, cols, drop=FALSE]
+    results <- results[order(results$query,
+                             results$target,
+                             results$chr, 
+                             results$pos, 
+                             results$strand,
+                             results$n_mismatches),,drop=FALSE]
+    rownames(results) <- NULL
     return(results)
 }
 
@@ -165,12 +158,6 @@ runBowtie <- function(sequences,
         results$mismatches[is.na(results$mismatches)] <- ""
         results$pos <- results$pos+1 #since bowtie is 0-based
         results$n_mismatches <- str_count(results$mismatches, "\\:")
-        results <- results[order(results$query,
-                                 results$chr, 
-                                 results$pos, 
-                                 results$strand,
-                                 results$n_mismatches),,drop=FALSE]
-        rownames(results) <- NULL
     } else {
         results <- vector(length=0)
     }
