@@ -56,14 +56,19 @@ test_that('Testing runCrisprBowtie with Cas9 canonical', {
                                         n_mismatches=3,
                                         crisprNuclease=Cas9,
                                         canonical=TRUE)
+    update <- FALSE 
     expect_equal_to_reference(results_cas9_mm0,
-                              file=file.path("objects/results_cas9_mm0.rds"))
+                              file=file.path("objects/results_cas9_mm0.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas9_mm1,
-                              file=file.path("objects/results_cas9_mm1.rds"))
+                              file=file.path("objects/results_cas9_mm1.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas9_mm2,
-                              file=file.path("objects/results_cas9_mm2.rds"))
+                              file=file.path("objects/results_cas9_mm2.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas9_mm3,
-                              file=file.path("objects/results_cas9_mm3.rds"))
+                              file=file.path("objects/results_cas9_mm3.rds"),
+                              update=update)
 })
 
 
@@ -88,14 +93,19 @@ test_that('Testing runCrisprBowtie with Cas9 non-canonical', {
                                         n_mismatches=3,
                                         crisprNuclease=Cas9,
                                         canonical=FALSE)
+    update <- FALSE 
     expect_equal_to_reference(results_cas9_mm0_nc,
-                              file=file.path("objects/results_cas9_mm0_nc.rds"))
+                              file=file.path("objects/results_cas9_mm0_nc.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas9_mm1_nc,
-                              file=file.path("objects/results_cas9_mm1_nc.rds"))
+                              file=file.path("objects/results_cas9_mm1_nc.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas9_mm2_nc,
-                              file=file.path("objects/results_cas9_mm2_nc.rds"))
+                              file=file.path("objects/results_cas9_mm2_nc.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas9_mm3_nc,
-                              file=file.path("objects/results_cas9_mm3_nc.rds"))
+                              file=file.path("objects/results_cas9_mm3_nc.rds"),
+                              update=update)
 })
 
 
@@ -114,6 +124,7 @@ test_that('Testing runCrisprBowtie with Cas9 (short spacers)', {
                                  n_mismatches=0,
                                  crisprNuclease=Cas9,
                                  canonical=FALSE))
+    update <- FALSE 
     results_short_cas9 <- runCrisprBowtie(spacers_cas9_short,
                                           bowtie_index=index,
                                           n_mismatches=3,
@@ -121,7 +132,9 @@ test_that('Testing runCrisprBowtie with Cas9 (short spacers)', {
                                           canonical=FALSE,
                                           force_spacer_length=TRUE)
     expect_equal_to_reference(results_short_cas9,
-                              file=file.path("objects/results_short_cas9.rds"))
+                              file=file.path("objects/results_short_cas9.rds"),
+                              update=update)
+
 })
 
 
@@ -148,14 +161,19 @@ test_that('Testing runCrisprBowtie with Cas12a', {
                                           n_mismatches=3,
                                           crisprNuclease=Cas12a,
                                           canonical=TRUE)
+    update <- FALSE 
     expect_equal_to_reference(results_cas12a_mm0,
-                              file=file.path("objects/results_cas12a_mm0.rds"))
+                              file=file.path("objects/results_cas12a_mm0.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas12a_mm1,
-                              file=file.path("objects/results_cas12a_mm1.rds"))
+                              file=file.path("objects/results_cas12a_mm1.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas12a_mm2,
-                              file=file.path("objects/results_cas12a_mm2.rds"))
+                              file=file.path("objects/results_cas12a_mm2.rds"),
+                              update=update)
     expect_equal_to_reference(results_cas12a_mm3,
-                              file=file.path("objects/results_cas12a_mm3.rds"))
+                              file=file.path("objects/results_cas12a_mm3.rds"),
+                              update=update)
 })
 
 
@@ -173,6 +191,7 @@ test_that('Testing runCrisprBowtie with Cas12a (short spacers)', {
                                  n_mismatches=0,
                                  crisprNuclease=Cas12a,
                                  canonical=FALSE))
+    update <- FALSE 
     results_short_cas12a <- runCrisprBowtie(spacers_cas12a_short,
                                             bowtie_index=index,
                                             n_mismatches=3,
@@ -180,7 +199,8 @@ test_that('Testing runCrisprBowtie with Cas12a (short spacers)', {
                                             canonical=FALSE,
                                             force_spacer_length=TRUE)
     expect_equal_to_reference(results_short_cas12a,
-                              file=file.path("objects/results_short_cas12a.rds"))
+                              file=file.path("objects/results_short_cas12a.rds"),
+                              update=update)
 })
 
 

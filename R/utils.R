@@ -89,6 +89,41 @@ utils::globalVariables(c('.', "SpCas9", "AsCas12a"))
 
 
 
+# Takes a character vector of sequences
+# and writes to disk the sequences 
+# in a fasta format. If temporary=TRUE,
+# the fasta file is written in a 
+# temporary folder. 
+#' @importFrom utils write.table
+.fastafy <- function(sequences,
+                     temporary=TRUE,
+                     file=NULL
+){
+    lines <- list()
+    lines[[1]] <- paste0("<", sequences)
+    lines[[2]] <- sequences
+    temp <- split(do.call(cbind, lines),
+                  f=sequences)
+    temp <- matrix(unlist(temp), ncol=1)
+    if (temporary){
+        file <- tempfile()
+    } else {
+        if (is.null(file)){
+            stop("If temporary=FALSE, 'file' must be provided.")
+        }
+    }
+    write.table(temp, 
+                file=file,
+                quote=FALSE,
+                row.names=FALSE,
+                col.names=FALSE)
+    return(file)
+}
+
+
+
+
+
 .validateBowtieIndex <- function(bowtie_index){
     suffixes_fwd <- paste0(".", seq_len(4), ".ebwt")
     suffixes_rev <- paste0(".rev.", seq_len(2), ".ebwt")
@@ -101,6 +136,19 @@ utils::globalVariables(c('.', "SpCas9", "AsCas12a"))
              " are missing: \n", missing)
     }
     return(bowtie_index)
+}
+
+
+
+
+#' @importFrom methods is
+.checkBSGenomeOrNull <- function(bsgenome){
+    if (!is.null(bsgenome)){
+        if (!is(bsgenome, "BSgenome")){
+            stop("Provided bsgenome argument must be a 'BSgenome' object or NULL. ")
+        }
+    }
+    invisible(NULL)
 }
 
 

@@ -36,12 +36,6 @@
 #'        \item \code{strand} - string specifying strand ("+" or "-") 
 #'        \item \code{n_mismatches} - integer specifying number of mismatches
 #'              between spacer and protospacer sequences
-#'        \item \code{mm1} - position of the first mismatch. NA if none.
-#'        \item \code{mm2} - position of the second mismatch. NA if none.
-#'        \item \code{mm3} - position of the third mismatch. NA if none.
-#'        \item \code{mmnuc1} - nucleotide in target space of the first mismatch.
-#'        \item \code{mmnuc2} - nucleotide in target space of the second mismatch.
-#'        \item \code{mmnuc3} - nucleotide in target space of the third mismatch.
 #'        \item \code{canonical} - logical indicating whether or not PAM sequence
 #'              is canonical. 
 #'    }
@@ -132,7 +126,7 @@ runCrisprBowtie <- function(spacers,
 
     # Getting nuclease info:
     pam.len     <- pamLength(crisprNuclease)
-    pam.side <- pamSide(crisprNuclease) 
+    pam.side    <- pamSide(crisprNuclease) 
     spacer.len  <- unique(nchar(spacers))
 
     if (length(spacer.len)>1){
@@ -188,6 +182,7 @@ runCrisprBowtie <- function(spacers,
     # Performing alignment:
     aln <- runBowtie(sequences=sequences, 
                      bowtie_index=bowtie_index, 
+                     bsgenome=bsgenome,
                      n_mismatches=n_mismatches,
                      n_max_alignments=n_max_alignments,
                      all_alignments=all_alignments,
@@ -210,19 +205,8 @@ runCrisprBowtie <- function(spacers,
                                           crisprNuclease=crisprNuclease)
             aln$pam <- as.character(getSeq(bsgenome, pam.gr))
             aln$canonical <- aln$pam %in% pams.canonical
-            if (canonical & !ignore_pam){
-                aln <- aln[aln$canonical,,drop=FALSE]
-            } else if (!canonical & !ignore_pam){
-                aln  <- aln[aln$pam %in% pams.noncanonical,,drop=FALSE]
-            }
         } 
     } else {
-        bad <- which(aln$mm1 %in% pam.indices|
-                     aln$mm2 %in% pam.indices| 
-                     aln$mm3 %in% pam.indices)
-        if (length(bad)>0){
-            aln <- aln[-bad,,drop=FALSE]
-        }
         if (nrow(aln)>0){
             aln$pam    <- extractPamFromProtospacer(aln$target,
                                                     crisprNuclease)
@@ -232,17 +216,36 @@ runCrisprBowtie <- function(spacers,
                                                        crisprNuclease)
             aln$canonical <- aln$pam %in% pams.canonical
         } 
+        # To remove mismatches occuring in pam sequences:
+        # Ordering by number of mismatches is important
+        # as higher number of mismatches for identical 
+        # spacer and protospacer indicates that the 
+        # last-ordered row has a mismatch in the PAM
+        aln <- aln[order(aln$query,
+                         aln$target,
+                         aln$chr,
+                         aln$pam_site,
+                         aln$n_mismatches),,drop=FALSE]
+
+        ids <- paste0(aln$query, aln$target, aln$chr, aln$pam_site)
+        bad <- which(duplicated(ids))
+        #bad <- which(aln$mm1 %in% pam.indices|
+        #             aln$mm2 %in% pam.indices| 
+        #             aln$mm3 %in% pam.indices)
+        if (length(bad)>0){
+            aln <- aln[-bad,,drop=FALSE]
+        }
+    }
+    if (canonical & !ignore_pam){
+        aln <- aln[aln$canonical,,drop=FALSE]
+    } else if (!canonical & !ignore_pam){
+        aln  <- aln[aln$pam %in% pams.noncanonical,,drop=FALSE]
     }
 
 
     if (nrow(aln)==0){
         aln <- .emptyAlignments()
     } else {
-        #Changing relative position of mismatch
-        if (pam.side=="5prime" & mode=="protospacer"){
-            wh <- paste0("mm", seq_len(N_MAX_MISMATCHES))
-            aln[, wh] <- aln[, wh]-pam.len
-        }
         aln <- aln[order(aln$query, aln$n_mismatches),,drop=FALSE]
         aln$pos <- NULL
         colnames(aln)[colnames(aln)=="query"]  <- "spacer"
@@ -263,8 +266,6 @@ runCrisprBowtie <- function(spacers,
                "pam_site",
                "strand", 
                "n_mismatches", 
-               "mm1", "mm2", "mm3", 
-               "mmnuc1", "mmnuc2", "mmnuc3", 
                "canonical")
     return(cols)
 }

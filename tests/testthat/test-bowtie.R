@@ -18,15 +18,20 @@ test_that('Testing runBowtie', {
     results_bowtie_2 <- runBowtie(seqs, bowtie_index=index, n_mismatches=2)
     results_bowtie_3 <- runBowtie(seqs, bowtie_index=index, n_mismatches=3)
     results_null <- runBowtie(long_seq, bowtie_index=index, n_mismatches=0)
+    update <- FALSE
 
     expect_equal_to_reference(results_bowtie_0,
-                              file=file.path("objects/results_bowtie_0.rds"))
+                              file=file.path("objects/results_bowtie_0.rds"),
+                              update=update)
     expect_equal_to_reference(results_bowtie_1,
-                              file=file.path("objects/results_bowtie_1.rds"))
+                              file=file.path("objects/results_bowtie_1.rds"),
+                              update=update)
     expect_equal_to_reference(results_bowtie_2,
-                              file=file.path("objects/results_bowtie_2.rds"))
+                              file=file.path("objects/results_bowtie_2.rds"),
+                              update=update)
     expect_equal_to_reference(results_bowtie_3,
-                              file=file.path("objects/results_bowtie_3.rds"))
+                              file=file.path("objects/results_bowtie_3.rds"),
+                              update=update)
     expect_true(is.null(results_null))
 })
 

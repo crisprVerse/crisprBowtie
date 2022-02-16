@@ -1,8 +1,28 @@
+#' fasta <- system.file(package="crisprBowtie", "example/chr1.fa")
+#' outdir <- tempdir()
+#' Rbowtie::bowtie_build(fasta,outdir=outdir, force=TRUE, prefix="tempIndex")
+# index <- "/Users/fortinj2/crisprIndices/bowtie/hg38/hg38"
+# bowtie_index <- index
+# sequences <- c("GGAAGTAAATTTGGT",
+#           "GTGGACCTCGGGAAT",
+#           "GTGTGCGGTAAAGTC")
+# n_mismatches=2
+# results <- runBowtie(seqs,
+#                      bowtie_index=index,
+#                      n_mismatches=2)
+
+
+# library(BSgenome.Hsapiens.UCSC.hg38)
+# bsgenome <- BSgenome.Hsapiens.UCSC.hg38
+
+
+
 #' @title Perform short sequence alignment with bowtie 
 #' @description Perform short sequence alignment with bowtie. 
 #' 
 #' @param sequences Character vector of DNA sequences.
 #' @param bowtie_index String specifying path to a bowtie index.
+#' @param bsgenome BSgenome object.
 #' @param n_mismatches Integer between 0 and 3 specifying maximum number
 #'     of mismatches allowed between query sequences and target DNA.
 #'     0 by default. 
@@ -23,12 +43,6 @@
 #'        \item \code{strand} - string specifying strand ("+" or "-") 
 #'        \item \code{n_mismatches} - integer specifying number of mismatches
 #'              between query and target sequences
-#'        \item \code{mm1} - position of the first mismatch. NA if none.
-#'        \item \code{mm2} - position of the second mismatch. NA if none.
-#'        \item \code{mm3} - position of the third mismatch. NA if none.
-#'        \item \code{mmnuc1} - nucleotide in target space of the first mismatch.
-#'        \item \code{mmnuc2} - nucleotide in target space of the second mismatch.
-#'        \item \code{mmnuc3} - nucleotide in target space of the third mismatch.
 #'    }
 #'     
 #' 
@@ -54,16 +68,18 @@
 #' 
 #' @importFrom Biostrings DNAStringSet DNAString replaceLetterAt
 #' @importFrom Rbowtie bowtie
-#' @importFrom stringr str_split
+#' @importFrom stringr str_split str_count
 #' @export
 runBowtie <- function(sequences, 
                       bowtie_index,
+                      bsgenome=NULL,
                       n_mismatches=0,
                       all_alignments=TRUE,
                       n_max_alignments=1000,
                       verbose=TRUE
 ){    
     .checkNMismatches(n_mismatches)
+    .checkBSGenomeOrNull(bsgenome)
     # Note: bowtie is based on python,
     # so index is 0-based instead of 1-based
     sequences <- unique(sequences)
@@ -74,11 +90,12 @@ runBowtie <- function(sequences,
                                          
     
     # Generating alignments:
-    input <- .fastqfy(sequences,
+    input <- .fastafy(sequences,
                       temporary=TRUE)
     results <- bowtie(sequences=input,
                       type="single",
                       index=bowtie_index,
+                      f=TRUE,
                       v=n_mismatches,
                       a=all_alignments,
                       k=crisprBase:::.makeLongInteger(n_max_alignments), 
@@ -105,7 +122,27 @@ runBowtie <- function(sequences,
     results$strand <- as.character(results$strand)
     results$pos    <- as.numeric(results$pos)
     results$pos    <- results$pos+1 #since bowtie is 0-based
+    results$n_mismatches <- str_count(results$mismatches, "\\:")
 
+    if (is.null(bsgenome)){
+        results <- .getDNATargetFromMismatches(results, sequences)
+    } else {
+        results <- .getDNATargetFromBSgenome(results, bsgenome)
+    }
+
+    # Cleaning up:
+    cols <- c("query", "target",
+              "chr", "pos", "strand",
+              "n_mismatches")
+    results <- results[, cols, drop=FALSE]
+    return(results)
+}
+
+
+
+
+.getDNATargetFromMismatches <- function(results, sequences){
+    
     # Processing mismatch info:
     results$mismatches <- as.character(results$mismatches)
     results$mismatches[results$mismatches==""]  <- "none"
@@ -116,9 +153,7 @@ runBowtie <- function(sequences,
                              stringsAsFactors=FALSE)
     results$mismatches   <- NULL
     mm_cols <- paste0("mm", seq_len(N_MAX_MISMATCHES))
-    results$n_mismatches <- rowSums(!is.na(results[, mm_cols]))
-
-
+    
 
     # Complementing mismatches for negative strand:
     wh.neg <- which(results$strand=="-")
@@ -175,13 +210,25 @@ runBowtie <- function(sequences,
     }
     results$target <- DNA
 
-    # Cleaning up:
-    cols <- c("query", "target", "chr", "pos", "strand", "n_mismatches",
-              paste0("mm", seq_len(N_MAX_MISMATCHES)),
-              paste0("mmnuc", seq_len(N_MAX_MISMATCHES)))
-    results <- results[, cols, drop=FALSE]
     return(results)
 }
+
+
+
+#' @importFrom BSgenome getSeq
+.getDNATargetFromBSgenome <- function(results, bsgenome){
+
+    dna <- BSgenome::getSeq(bsgenome,
+                            names=results$chr,
+                            start=results$pos,
+                            end=results$pos+nchar(results$query)-1,
+                            strand=results$strand,
+                            as.character=TRUE)
+    results$target <- dna
+    return(results)
+}
+
+
 
 
 .checkNMismatches <- function(n_mismatches){

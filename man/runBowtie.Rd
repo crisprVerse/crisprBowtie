@@ -7,6 +7,7 @@
 runBowtie(
   sequences,
   bowtie_index,
+  bsgenome = NULL,
   n_mismatches = 0,
   all_alignments = TRUE,
   n_max_alignments = 1000,
@@ -17,6 +18,8 @@ runBowtie(
 \item{sequences}{Character vector of DNA sequences.}
 
 \item{bowtie_index}{String specifying path to a bowtie index.}
+
+\item{bsgenome}{BSgenome object.}
 
 \item{n_mismatches}{Integer between 0 and 3 specifying maximum number
 of mismatches allowed between query sequences and target DNA.
@@ -42,18 +45,16 @@ A data.frame of the alignments with the following columns:
        \item \code{strand} - string specifying strand ("+" or "-") 
        \item \code{n_mismatches} - integer specifying number of mismatches
              between query and target sequences
-       \item \code{mm1} - position of the first mismatch. NA if none.
-       \item \code{mm2} - position of the second mismatch. NA if none.
-       \item \code{mm3} - position of the third mismatch. NA if none.
-       \item \code{mmnuc1} - nucleotide in target space of the first mismatch.
-       \item \code{mmnuc2} - nucleotide in target space of the second mismatch.
-       \item \code{mmnuc3} - nucleotide in target space of the third mismatch.
    }
 }
 \description{
 Perform short sequence alignment with bowtie.
 }
 \details{
+fasta <- system.file(package="crisprBowtie", "example/chr1.fa")
+outdir <- tempdir()
+Rbowtie::bowtie_build(fasta,outdir=outdir, force=TRUE, prefix="tempIndex")
+
 \code{runBowtie} can be used to map short DNA sequences 
     to a reference genome. To search for sequences while imposing
     constraints on PAM sequences (such as gRNA spacer sequences), see

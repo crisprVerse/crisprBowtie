@@ -67,12 +67,6 @@ A data.frame of the spacer alignments with the following columns:
        \item \code{strand} - string specifying strand ("+" or "-") 
        \item \code{n_mismatches} - integer specifying number of mismatches
              between spacer and protospacer sequences
-       \item \code{mm1} - position of the first mismatch. NA if none.
-       \item \code{mm2} - position of the second mismatch. NA if none.
-       \item \code{mm3} - position of the third mismatch. NA if none.
-       \item \code{mmnuc1} - nucleotide in target space of the first mismatch.
-       \item \code{mmnuc2} - nucleotide in target space of the second mismatch.
-       \item \code{mmnuc3} - nucleotide in target space of the third mismatch.
        \item \code{canonical} - logical indicating whether or not PAM sequence
              is canonical. 
    }
