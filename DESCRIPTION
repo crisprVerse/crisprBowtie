@@ -13,6 +13,7 @@ Imports:
     GenomicRanges,
     IRanges,
     Rbowtie,
+    readr,
     stats,
     stringr,
     utils

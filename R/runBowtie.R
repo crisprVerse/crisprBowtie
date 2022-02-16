@@ -68,7 +68,6 @@
 #' 
 #' @importFrom Biostrings DNAStringSet DNAString replaceLetterAt
 #' @importFrom Rbowtie bowtie
-#' @importFrom stringr str_split str_count
 #' @export
 runBowtie <- function(sequences, 
                       bowtie_index,
@@ -92,14 +91,20 @@ runBowtie <- function(sequences,
     # Generating alignments:
     input <- .fastafy(sequences,
                       temporary=TRUE)
+    outfile <- tempfile()
     results <- bowtie(sequences=input,
                       type="single",
                       index=bowtie_index,
+                      outfile=outfile,
                       f=TRUE,
                       v=n_mismatches,
                       a=all_alignments,
                       k=crisprBase:::.makeLongInteger(n_max_alignments), 
                       force=TRUE)
+    #cat("Reading bowtie output file. \n")
+    results <- .readBowtieResults(outfile)
+
+
 
     if (file.exists(input)){
         file.remove(input)
@@ -110,23 +115,24 @@ runBowtie <- function(sequences,
     }  
 
     # Reformatting data:
-    results <- str_split(results, pattern="\t")
-    results <- do.call("rbind", results)
-    results <- as.data.frame(results, stringsAsFactors=FALSE)
-    colnames(results) <- c("query", "strand", "chr", "pos",
-                           "target", "qc", "idk", "mismatches")
-    cols    <- c("query", "chr", "pos", "strand", "mismatches")
-    results <- results[,cols]
-    results$query  <- as.character(results$query)
-    results$chr    <- as.character(results$chr)
-    results$strand <- as.character(results$strand)
-    results$pos    <- as.numeric(results$pos)
-    results$pos    <- results$pos+1 #since bowtie is 0-based
-    results$n_mismatches <- str_count(results$mismatches, "\\:")
-
+    #results <- str_split(results, pattern="\t")
+    #results <- do.call("rbind", results)
+    #results <- as.data.frame(results, stringsAsFactors=FALSE)
+    #colnames(results) <- c("query", "strand", "chr", "pos",
+    #                       "target", "qc", "idk", "mismatches")
+    #cols    <- c("query", "chr", "pos", "strand", "mismatches")
+    #results <- results[,cols]
+    #results$query  <- as.character(results$query)
+    #results$chr    <- as.character(results$chr)
+    #results$strand <- as.character(results$strand)
+    #results$pos    <- as.numeric(results$pos)
+    #results$pos    <- results$pos+1 #since bowtie is 0-based
+    
+    #cat("Getting DNA target \n")
     if (is.null(bsgenome)){
         results <- .getDNATargetFromMismatches(results, sequences)
     } else {
+        #cat("Getting target sequences \n")
         results <- .getDNATargetFromBSgenome(results, bsgenome)
     }
 
@@ -137,6 +143,40 @@ runBowtie <- function(sequences,
     results <- results[, cols, drop=FALSE]
     return(results)
 }
+
+
+
+
+#' @importFrom readr read_delim
+#' @importFrom stringr str_count
+.readBowtieResults <- function(file){
+    isEmpty <- file.size(file)==0L
+    if (!isEmpty){
+        cols <- c("query", "strand", "chr", "pos",
+                  "target", "qc", "idk", "mismatches")
+        results <- read_delim(file,
+                              col_names=cols,
+                              col_types=c("ccciccic"),
+                              col_select=c(1,2,3,4,8),
+                              delim="\t") 
+        results <- as.data.frame(results)
+        cols  <- c("query", "chr", "pos", "strand", "mismatches")    
+        results <- results[,cols,drop=FALSE]
+        results$mismatches[is.na(results$mismatches)] <- ""
+        results$pos <- results$pos+1 #since bowtie is 0-based
+        results$n_mismatches <- str_count(results$mismatches, "\\:")
+        results <- results[order(results$query,
+                                 results$chr, 
+                                 results$pos, 
+                                 results$strand,
+                                 results$n_mismatches),,drop=FALSE]
+        rownames(results) <- NULL
+    } else {
+        results <- vector(length=0)
+    }
+    return(results)
+}
+
 
 
 

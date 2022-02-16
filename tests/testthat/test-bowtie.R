@@ -35,3 +35,5 @@ test_that('Testing runBowtie', {
     expect_true(is.null(results_null))
 })
 
+
+

@@ -180,6 +180,7 @@ runCrisprBowtie <- function(spacers,
     }
 
     # Performing alignment:
+    cat("Getting alignments \n")
     aln <- runBowtie(sequences=sequences, 
                      bowtie_index=bowtie_index, 
                      bsgenome=bsgenome,
@@ -191,12 +192,14 @@ runCrisprBowtie <- function(spacers,
         return(.emptyAlignments())
     }
 
+    #cat("Getting pam site \n")
     aln$pam_site <- .getPamSiteFromBowtieOutput(pos=aln$pos, 
                                                 strand=aln$strand, 
                                                 spacer.len=spacer.len,
                                                 crisprNuclease=crisprNuclease,
                                                 mode=mode)
 
+    #cat("Getting PAM sequences \n")
     if (mode=="spacer"){
         if (nrow(aln)>0){
             pam.gr <- .getBowtiePamRanges(chr=aln$chr,

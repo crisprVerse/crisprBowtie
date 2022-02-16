@@ -100,7 +100,7 @@ utils::globalVariables(c('.', "SpCas9", "AsCas12a"))
                      file=NULL
 ){
     lines <- list()
-    lines[[1]] <- paste0("<", sequences)
+    lines[[1]] <- paste0(">", sequences)
     lines[[2]] <- sequences
     temp <- split(do.call(cbind, lines),
                   f=sequences)
