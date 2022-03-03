@@ -16,6 +16,7 @@ runCrisprBowtie(
   all_alignments = TRUE,
   n_max_alignments = 1000,
   force_spacer_length = FALSE,
+  rna_strict_directionality = TRUE,
   verbose = TRUE
 )
 }
@@ -24,12 +25,15 @@ runCrisprBowtie(
 Sequences must all be of equal length.}
 
 \item{mode}{String specifying which alignment mode should be used:
-\code{protospacer} or \code{spacer}.}
+\code{protospacer} or \code{spacer}. 
+For RNA-targeting nucleases such as CasRx, only the 
+protospacer mode can be used.}
 
 \item{bowtie_index}{String specifying path to a bowtie index.}
 
 \item{bsgenome}{A \linkS4class{BSgenome} object.
-Must be provided if \code{mode} is "spacer".}
+Must be provided if \code{mode} is "spacer".
+Ignore}
 
 \item{crisprNuclease}{A \linkS4class{CrisprNuclease} object.}
 
@@ -52,6 +56,10 @@ TRUE by default.}
 
 \item{force_spacer_length}{Should the spacer length be overwritten in the
 \code{crisprNuclease} object? FALSE by default.}
+
+\item{rna_strict_directionality}{Should only protospacers found in the 
+original direction of the RNA be considered for RNA-targeting
+nucleases? TRUE by default.}
 
 \item{verbose}{Should messages be printed to the console? TRUE by default.}
 }
@@ -76,7 +84,7 @@ Perform CRISPR gRNA spacer alignment with bowtie.
 }
 \details{
 When \code{mode} is "spacer", spacer sequences are aligned to the
-    genome without appending PAM sequences first. This requires the
+    reference index without appending PAM sequences first. This requires the
     specification of a \linkS4class{BSgenome} object through the argument
     \code{bsgenome} to validate that the aligned spacer sequences are
     adjacent to valid PAM sequences. 
@@ -86,6 +94,13 @@ When \code{mode} is "spacer", spacer sequences are aligned to the
     sequences depend on the inputs  \code{canonical} and \code{ignore_pam}.
     This is faster than the "spacer" mode if the number of possible
     PAM sequences is small (e.g. SpCas9).
+
+    For RNA-targeting nucleases, such as RfxCas13d (CasRx), the bowtie
+    index should be built on a transcriptome. For such applications,
+    only the "protospacer" mode can be used as there is no
+    corresponding bsgenome package. The protospacer sequences
+    searched in the reference index will be the reverse complement
+    of the input spacer sequences.
 }
 \examples{
 fasta <- system.file(package="crisprBowtie", "example/chr1.fa")

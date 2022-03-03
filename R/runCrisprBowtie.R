@@ -5,9 +5,12 @@
 #'     Sequences must all be of equal length. 
 #' @param mode String specifying which alignment mode should be used:
 #'     \code{protospacer} or \code{spacer}. 
+#'     For RNA-targeting nucleases such as CasRx, only the 
+#'     protospacer mode can be used. 
 #' @param bowtie_index String specifying path to a bowtie index.
 #' @param bsgenome A \linkS4class{BSgenome} object.
 #'     Must be provided if \code{mode} is "spacer".
+#'     Ignore
 #' @param crisprNuclease A \linkS4class{CrisprNuclease} object. 
 #' @param canonical Should only canonical PAM sequences be considered?
 #'     TRUE by default.
@@ -23,6 +26,9 @@
 #'     \code{all_alignments} is FALSE. 1000 by default. 
 #' @param force_spacer_length Should the spacer length be overwritten in the
 #'     \code{crisprNuclease} object? FALSE by default. 
+#' @param rna_strict_directionality Should only protospacers found in the 
+#'     original direction of the RNA be considered for RNA-targeting
+#'     nucleases? TRUE by default.
 #' @param verbose Should messages be printed to the console? TRUE by default.
 #' 
 #' @return A data.frame of the spacer alignments with the following columns:
@@ -42,7 +48,7 @@
 #'     
 #' 
 #' @details When \code{mode} is "spacer", spacer sequences are aligned to the
-#'     genome without appending PAM sequences first. This requires the
+#'     reference index without appending PAM sequences first. This requires the
 #'     specification of a \linkS4class{BSgenome} object through the argument
 #'     \code{bsgenome} to validate that the aligned spacer sequences are
 #'     adjacent to valid PAM sequences. 
@@ -52,6 +58,13 @@
 #'     sequences depend on the inputs  \code{canonical} and \code{ignore_pam}.
 #'     This is faster than the "spacer" mode if the number of possible
 #'     PAM sequences is small (e.g. SpCas9).
+#' 
+#'     For RNA-targeting nucleases, such as RfxCas13d (CasRx), the bowtie
+#'     index should be built on a transcriptome. For such applications,
+#'     only the "protospacer" mode can be used as there is no
+#'     corresponding bsgenome package. The protospacer sequences
+#'     searched in the reference index will be the reverse complement
+#'     of the input spacer sequences.
 #' 
 #' @examples
 #' fasta <- system.file(package="crisprBowtie", "example/chr1.fa")
@@ -77,6 +90,7 @@
 #' @importFrom crisprBase nucleaseName pams pamLength pamIndices
 #' @importFrom crisprBase spacerLength spacerLength<- pamSide
 #' @importFrom crisprBase hasSpacerGap isRnase
+#' @importFrom Biostrings reverseComplement DNAStringSet
 runCrisprBowtie <- function(spacers, 
                             mode=c("protospacer", "spacer"),
                             bowtie_index=NULL,
@@ -88,17 +102,19 @@ runCrisprBowtie <- function(spacers,
                             all_alignments=TRUE,
                             n_max_alignments=1000,
                             force_spacer_length=FALSE,
+                            rna_strict_directionality=TRUE,
                             verbose=TRUE
 ){ 
     #Checking inputs:
     mode     <- match.arg(mode)
     crisprNuclease <- .validateCrisprNuclease(crisprNuclease)
-    if (isRnase(crisprNuclease)){
-        stop("RNA-targeting CRISPR nucleases are not supported yet.")
-    }
     if (hasSpacerGap(crisprNuclease)){
         stop("CRISPR nucleases with spacer gaps are not ",
              "supported at the moment.")
+    }
+    if (isRnase(crisprNuclease) & mode=="spacer"){
+        stop("For RNA-targeting nucleases, the alignment mode must ",
+             "be set to 'protospacer'.")
     }
     if (mode=="spacer"){
         bsgenome <- .validateBSGenome(bsgenome)
@@ -163,17 +179,26 @@ runCrisprBowtie <- function(spacers,
 
      
 
+
+
     # Getting input sequences:
     if (mode=="spacer"){
         sequences <- spacers
     } else {
+        if (isRnase(crisprNuclease)){
+            sequences <- reverseComplement(DNAStringSet(spacers))
+            sequences <- as.character(sequences)
+        } else {
+            sequences <- spacers
+        }
+
         if (pam.side=="3prime"){
             protospacers <- lapply(possiblePams, function(x){
-                paste0(spacers, x)
+                paste0(sequences, x)
             })
         } else {
             protospacers <- lapply(possiblePams, function(x){
-                paste0(x, spacers)
+                paste0(x, sequences)
             })
         }
         sequences <- do.call("c", protospacers)
@@ -255,6 +280,16 @@ runCrisprBowtie <- function(spacers,
         aln <- aln[ ,.outputColumns(), drop=FALSE]
         rownames(aln) <- NULL
     }
+
+    # RNAse considerations:
+    if (isRnase(crisprNuclease)){
+        spacers <- reverseComplement(DNAStringSet(aln$spacer))
+        aln$spacer <- as.character(spacers)
+        if (rna_strict_directionality){
+            aln <- aln[aln$strand=="+",,drop=FALSE]
+        }
+    }
+
     return(aln)
 }
 
