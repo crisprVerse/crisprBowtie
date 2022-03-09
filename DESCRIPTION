@@ -1,6 +1,6 @@
 Package: crisprBowtie
-Version: 0.99.3
-Date: 2022-03-03
+Version: 0.99.4
+Date: 2022-03-08
 Title: Bowtie-based alignment of CRISPR gRNA spacer sequences
 Authors@R: c(
     person("Jean-Philippe", "Fortin", email = "fortin946@gmail.com", role = c("aut", "cre")))
@@ -9,7 +9,7 @@ Depends:
 Imports:
     Biostrings,
     BSgenome,
-    crisprBase (>= 0.99.7),
+    crisprBase (>= 0.99.15),
     GenomicRanges,
     IRanges,
     Rbowtie,

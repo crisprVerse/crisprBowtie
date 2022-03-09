@@ -85,8 +85,8 @@
 #' 
 #' @export
 #' @importFrom BSgenome getSeq
-#' @importFrom crisprBase extractPamFromProtospacer
-#' @importFrom crisprBase extractSpacerFromProtospacer
+#' @importFrom crisprBase extractPamFromTarget
+#' @importFrom crisprBase extractProtospacerFromTarget
 #' @importFrom crisprBase nucleaseName pams pamLength pamIndices
 #' @importFrom crisprBase spacerLength spacerLength<- pamSide
 #' @importFrom crisprBase hasSpacerGap isRnase
@@ -235,11 +235,11 @@ runCrisprBowtie <- function(spacers,
         } 
     } else {
         if (nrow(aln)>0){
-            aln$pam    <- extractPamFromProtospacer(aln$target,
+            aln$pam    <- extractPamFromTarget(aln$target,
                                                     crisprNuclease)
-            aln$target <- extractSpacerFromProtospacer(aln$target,
+            aln$target <- extractProtospacerFromTarget(aln$target,
                                                        crisprNuclease)
-            aln$query  <- extractSpacerFromProtospacer(aln$query,
+            aln$query  <- extractProtospacerFromTarget(aln$query,
                                                        crisprNuclease)
             aln$canonical <- aln$pam %in% pams.canonical
         } 
