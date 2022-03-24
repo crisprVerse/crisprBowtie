@@ -90,6 +90,7 @@
 #' @importFrom crisprBase nucleaseName pams pamLength pamIndices
 #' @importFrom crisprBase spacerLength spacerLength<- pamSide
 #' @importFrom crisprBase hasSpacerGap isRnase
+#' @importFrom crisprBase getTargetRanges
 #' @importFrom Biostrings reverseComplement DNAStringSet
 runCrisprBowtie <- function(spacers, 
                             mode=c("protospacer", "spacer"),
@@ -225,6 +226,17 @@ runCrisprBowtie <- function(spacers,
 
     #cat("Getting PAM sequences \n")
     if (mode=="spacer"){
+        if (nrow(aln)>0){
+
+            # Filtering out PAMs falling outside of chrs
+            protoRanges <- getTargetRanges(seqnames=aln$chr,
+                                           pam_site=aln$pam_site,
+                                           strand=aln$strand,
+                                           nuclease=crisprNuclease)
+            chr_lens <- seqlengths(bsgenome)[as.character(seqnames(protoRanges))]
+            valid <- start(protoRanges)>0 & end(protoRanges) <= chr_lens
+            aln <- aln[valid,,drop=FALSE]
+        }
         if (nrow(aln)>0){
             pam.gr <- .getBowtiePamRanges(chr=aln$chr,
                                           pam_site=aln$pam_site,
