@@ -84,7 +84,7 @@
 #' @author Jean-Philippe Fortin
 #' 
 #' @export
-#' @importFrom GenomeInfoDb seqlengths
+#' @importFrom GenomeInfoDb seqlengths seqnames
 #' @importFrom BSgenome getSeq
 #' @importFrom crisprBase extractPamFromTarget
 #' @importFrom crisprBase extractProtospacerFromTarget
@@ -93,6 +93,7 @@
 #' @importFrom crisprBase hasSpacerGap isRnase
 #' @importFrom crisprBase getTargetRanges
 #' @importFrom Biostrings reverseComplement DNAStringSet
+#' @importFrom BiocGenerics start end
 runCrisprBowtie <- function(spacers, 
                             mode=c("protospacer", "spacer"),
                             bowtie_index=NULL,
@@ -235,7 +236,7 @@ runCrisprBowtie <- function(spacers,
                                            strand=aln$strand,
                                            nuclease=crisprNuclease)
             chr_lens <- seqlengths(bsgenome)[as.character(seqnames(protoRanges))]
-            valid <- start(protoRanges)>0 & end(protoRanges) <= chr_lens
+            valid <- BiocGenerics::start(protoRanges)>0 & BiocGenerics::end(protoRanges) <= chr_lens
             aln <- aln[valid,,drop=FALSE]
         }
         if (nrow(aln)>0){
