@@ -180,8 +180,6 @@ runCrisprBowtie <- function(spacers,
                               as.character=TRUE)
     pam.indices <- pamIndices(crisprNuclease)
 
-     
-
 
 
     # Getting input sequences:
@@ -225,6 +223,7 @@ runCrisprBowtie <- function(spacers,
                                                 spacer.len=spacer.len,
                                                 crisprNuclease=crisprNuclease,
                                                 mode=mode)
+    aln <- aln[aln$pam_site>0,,drop=FALSE]
 
     #cat("Getting PAM sequences \n")
     if (mode=="spacer"){
