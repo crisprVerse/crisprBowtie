@@ -224,6 +224,9 @@ runCrisprBowtie <- function(spacers,
                                                 crisprNuclease=crisprNuclease,
                                                 mode=mode)
     aln <- aln[aln$pam_site>0,,drop=FALSE]
+    if (nrow(aln)==0){
+        return(.emptyAlignments())
+    }
 
     #cat("Getting PAM sequences \n")
     if (mode=="spacer"){
