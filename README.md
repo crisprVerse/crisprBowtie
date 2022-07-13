@@ -60,13 +60,11 @@ was developed and tested on R version 4.2.
 following commands inside of an R session:
 
 ``` r
-install.packages("devtools")
-library(devtools)
-install_github("Jfortin1/crisprBase")
-install_github("Jfortin1/crisprBowtie")
-
 install.packages("BiocManager")
+install.packages("devtools")
 BiocManager::install("Rbowtie")
+devtools::install_github("Jfortin1/crisprBase")
+devtools::install_github("Jfortin1/crisprBowtie")
 ```
 
 ## Installation from Bioconductor
