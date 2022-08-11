@@ -7,9 +7,9 @@ crisprBowtie: alignment of gRNA spacer sequences using bowtie
     -   [Software requirements](#software-requirements)
         -   [OS Requirements](#os-requirements)
         -   [R Dependencies](#r-dependencies)
-    -   [Installation from GitHub](#installation-from-github)
     -   [Installation from
         Bioconductor](#installation-from-bioconductor)
+    -   [Installation from GitHub](#installation-from-github)
 -   [Building a bowtie index](#building-a-bowtie-index)
 -   [Alignment using
     `runCrisprBowtie`](#alignment-using-runcrisprbowtie)
@@ -54,19 +54,6 @@ was developed and tested on R version 4.2.
 -   RBowtie:
     <https://bioconductor.org/packages/release/bioc/html/Rbowtie.html>
 
-## Installation from GitHub
-
-`crisprBowtie` and its dependencies can be installed by typing the
-following commands inside of an R session:
-
-``` r
-install.packages("BiocManager")
-install.packages("devtools")
-BiocManager::install("Rbowtie")
-devtools::install_github("Jfortin1/crisprBase")
-devtools::install_github("Jfortin1/crisprBowtie")
-```
-
 ## Installation from Bioconductor
 
 `crisprBowtie` can be installed from Bioconductor using the following
@@ -75,6 +62,19 @@ commands in a fresh R session:
 ``` r
 install.packages("BiocManager")
 BiocManager::install("crisprBowtie")
+```
+
+## Installation from GitHub
+
+Alternatively, `crisprBowtie` and its dependencies can be installed by
+typing the following commands inside of an R session:
+
+``` r
+install.packages("BiocManager")
+install.packages("devtools")
+BiocManager::install("Rbowtie")
+devtools::install_github("crisprVerse/crisprBase")
+devtools::install_github("crisprVerse/crisprBowtie")
 ```
 
 # Building a bowtie index
@@ -194,7 +194,7 @@ sessionInfo()
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ## [1] crisprBowtie_1.1.1 Rbowtie_1.35.0    
+    ## [1] crisprBowtie_1.1.1 Rbowtie_1.36.0    
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] SummarizedExperiment_1.25.3 tidyselect_1.1.2           
@@ -203,25 +203,25 @@ sessionInfo()
     ##  [7] htmltools_0.5.2             stats4_4.2.0               
     ##  [9] rtracklayer_1.55.4          yaml_2.3.5                 
     ## [11] utf8_1.2.2                  XML_3.99-0.9               
-    ## [13] rlang_1.0.2                 pillar_1.7.0               
+    ## [13] rlang_1.0.4                 pillar_1.7.0               
     ## [15] glue_1.6.2                  BiocParallel_1.29.18       
-    ## [17] bit64_4.0.5                 BiocGenerics_0.41.2        
+    ## [17] bit64_4.0.5                 BiocGenerics_0.42.0        
     ## [19] matrixStats_0.61.0          GenomeInfoDbData_1.2.7     
     ## [21] lifecycle_1.0.1             stringr_1.4.0              
     ## [23] zlibbioc_1.41.0             MatrixGenerics_1.7.0       
-    ## [25] Biostrings_2.63.2           evaluate_0.15              
+    ## [25] Biostrings_2.64.0           evaluate_0.15              
     ## [27] restfulr_0.0.13             Biobase_2.55.0             
     ## [29] knitr_1.37                  tzdb_0.2.0                 
-    ## [31] IRanges_2.29.1              fastmap_1.1.0              
-    ## [33] GenomeInfoDb_1.31.6         parallel_4.2.0             
-    ## [35] fansi_1.0.2                 crisprBase_1.1.2           
-    ## [37] readr_2.1.2                 BSgenome_1.63.5            
+    ## [31] IRanges_2.30.0              fastmap_1.1.0              
+    ## [33] GenomeInfoDb_1.32.2         parallel_4.2.0             
+    ## [35] fansi_1.0.2                 crisprBase_1.1.5           
+    ## [37] readr_2.1.2                 BSgenome_1.64.0            
     ## [39] DelayedArray_0.21.2         S4Vectors_0.33.11          
     ## [41] vroom_1.5.7                 XVector_0.35.0             
     ## [43] bit_4.0.4                   Rsamtools_2.11.0           
     ## [45] rjson_0.2.21                hms_1.1.1                  
     ## [47] digest_0.6.29               stringi_1.7.6              
-    ## [49] BiocIO_1.5.0                GenomicRanges_1.47.6       
+    ## [49] BiocIO_1.5.0                GenomicRanges_1.48.0       
     ## [51] grid_4.2.0                  cli_3.3.0                  
     ## [53] tools_4.2.0                 bitops_1.0-7               
     ## [55] magrittr_2.0.2              RCurl_1.98-1.6             

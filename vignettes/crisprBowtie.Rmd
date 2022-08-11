@@ -54,18 +54,6 @@ Package was developed and tested on R version 4.2.
 - RBowtie: https://bioconductor.org/packages/release/bioc/html/Rbowtie.html
 
 
-## Installation from GitHub
-
-`crisprBowtie` and its dependencies can be installed by typing the
-following commands inside of an R session:
-
-```r
-install.packages("BiocManager")
-install.packages("devtools")
-BiocManager::install("Rbowtie")
-devtools::install_github("Jfortin1/crisprBase")
-devtools::install_github("Jfortin1/crisprBowtie")
-```
 
 
 ## Installation from Bioconductor
@@ -76,6 +64,19 @@ commands in a fresh R session:
 ```{r, eval=FALSE}
 install.packages("BiocManager")
 BiocManager::install("crisprBowtie")
+```
+
+## Installation from GitHub
+
+Alternatively, `crisprBowtie` and its dependencies can be installed by typing the
+following commands inside of an R session:
+
+```r
+install.packages("BiocManager")
+install.packages("devtools")
+BiocManager::install("Rbowtie")
+devtools::install_github("crisprVerse/crisprBase")
+devtools::install_github("crisprVerse/crisprBowtie")
 ```
 
 
