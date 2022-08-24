@@ -39,7 +39,7 @@ type of CRISPR nucleases.
 ### OS Requirements
 
 This package is supported for macOS, Linux and Windows machines.
-Package was developed and tested on R version 4.2.
+Package was developed and tested on R version 4.2.1.
 
 ### R Dependencies 
 
