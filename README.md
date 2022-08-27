@@ -73,6 +73,9 @@ install.packages("BiocManager")
 BiocManager::install("crisprBowtie")
 ```
 
+The complete documentation for the package can be found
+[here](https://bioconductor.org/packages/devel/bioc/manuals/crisprBowtie/man/crisprBowtie.pdf).
+
 ## Installation from GitHub
 
 Alternatively, `crisprBowtie` and its dependencies can be installed by
