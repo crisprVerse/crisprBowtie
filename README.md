@@ -65,11 +65,14 @@ was developed and tested on R version 4.2.1.
 
 ## Installation from Bioconductor
 
-`crisprBowtie` can be installed from Bioconductor using the following
-commands in a fresh R session:
+`crisprBowtie` can be installed from from the Bioconductor devel branch
+using the following commands in a fresh R session:
 
 ``` r
-install.packages("BiocManager")
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install(version="devel")
 BiocManager::install("crisprBowtie")
 ```
 
