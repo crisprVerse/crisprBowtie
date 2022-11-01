@@ -1,5 +1,5 @@
 Package: crisprBowtie
-Version: 1.2.0
+Version: 1.3.0
 Date: 2022-10-17
 Title: Bowtie-based alignment of CRISPR gRNA spacer sequences
 Authors@R: c(
