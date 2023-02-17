@@ -1,6 +1,6 @@
 Package: crisprBowtie
-Version: 1.1.1
-Date: 2022-03-08
+Version: 1.3.2
+Date: 2023-02-17
 Title: Bowtie-based alignment of CRISPR gRNA spacer sequences
 Authors@R: c(
     person("Jean-Philippe", "Fortin", email = "fortin946@gmail.com", role = c("aut", "cre")))
@@ -33,7 +33,7 @@ Description: Provides a user-friendly interface to map on-targets and off-target
     Both DNA- and RNA-targeting nucleases are supported.
 License: MIT + file LICENSE
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 VignetteBuilder: knitr
 BugReports: https://github.com/crisprVerse/crisprBowtie/issues
 URL: https://github.com/crisprVerse/crisprBowtie

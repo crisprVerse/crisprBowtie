@@ -243,7 +243,15 @@ runBowtie <- function(sequences,
 
 
 #' @importFrom BSgenome getSeq
+#' @importFrom GenomeInfoDb seqlevels
 .getDNATargetFromBSgenome <- function(results, bsgenome){
+
+    validSeqLevels <- seqlevels(bsgenome)
+    if (sum(results$chr %in% validSeqLevels)==0){
+        stop("The chr info in the bowtie index does not match ",
+             "the chr info in the bsgenome object.")
+    }
+    results <- results[results$chr %in% validSeqLevels,,drop=FALSE]
 
     dna <- BSgenome::getSeq(bsgenome,
                             names=results$chr,
