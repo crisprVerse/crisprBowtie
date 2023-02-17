@@ -251,6 +251,12 @@ runBowtie <- function(sequences,
         stop("The chr info in the bowtie index does not match ",
              "the chr info in the bsgenome object.")
     }
+    if (any(!results$chr %in% validSeqLevels)){
+        wMessage <- paste("Some alignments found in seqlevels not",
+                          "present in bsgenome, ignoring.")
+        warning(wMessage,
+                immediate.=TRUE)
+    }
     results <- results[results$chr %in% validSeqLevels,,drop=FALSE]
 
     dna <- BSgenome::getSeq(bsgenome,
