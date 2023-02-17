@@ -252,8 +252,9 @@ runBowtie <- function(sequences,
              "the chr info in the bsgenome object.")
     }
     if (any(!results$chr %in% validSeqLevels)){
-        wMessage <- paste("Some alignments found in seqlevels not",
-                          "present in bsgenome, ignoring.")
+        wMessage <- paste("Some alignments map to chromosome names not found",
+                          "in the BSgenome object; those alignments will be",
+                          "ignored.")
         warning(wMessage,
                 immediate.=TRUE)
     }
