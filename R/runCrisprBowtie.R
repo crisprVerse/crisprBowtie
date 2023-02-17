@@ -224,24 +224,31 @@ runCrisprBowtie <- function(spacers,
                                                 crisprNuclease=crisprNuclease,
                                                 mode=mode)
     aln <- aln[aln$pam_site>0,,drop=FALSE]
-    if (nrow(aln)==0){
+    if (nrow(aln) == 0){
         return(.emptyAlignments())
     }
 
     #cat("Getting PAM sequences \n")
-    if (mode=="spacer"){
-        if (nrow(aln)>0){
-
+    if (mode == "spacer"){
+        if (nrow(aln) > 0){
             # Filtering out PAMs falling outside of chrs
             protoRanges <- getTargetRanges(seqnames=aln$chr,
                                            pam_site=aln$pam_site,
                                            strand=aln$strand,
                                            nuclease=crisprNuclease)
             chr_lens <- seqlengths(bsgenome)[as.character(seqnames(protoRanges))]
-            valid <- BiocGenerics::start(protoRanges)>0 & BiocGenerics::end(protoRanges) <= chr_lens
+            valid <- BiocGenerics::start(protoRanges) > 0 &
+                BiocGenerics::end(protoRanges) <= chr_lens
+            if (any(is.na(valid))){
+                wMessage <- paste("Some alignments found in seqlevels not",
+                                  "present in bsgenome, ignoring.")
+                warning(wMessage,
+                        immediate.=TRUE)
+                valid[is.na(valid)] <- FALSE
+            }
             aln <- aln[valid,,drop=FALSE]
         }
-        if (nrow(aln)>0){
+        if (nrow(aln) > 0){
             pam.gr <- .getBowtiePamRanges(chr=aln$chr,
                                           pam_site=aln$pam_site,
                                           strand=aln$strand,
@@ -250,7 +257,7 @@ runCrisprBowtie <- function(spacers,
             aln$canonical <- aln$pam %in% pams.canonical
         } 
     } else {
-        if (nrow(aln)>0){
+        if (nrow(aln) > 0){
             aln$pam    <- extractPamFromTarget(aln$target,
                                                     crisprNuclease)
             aln$target <- extractProtospacerFromTarget(aln$target,
@@ -275,7 +282,7 @@ runCrisprBowtie <- function(spacers,
         #bad <- which(aln$mm1 %in% pam.indices|
         #             aln$mm2 %in% pam.indices| 
         #             aln$mm3 %in% pam.indices)
-        if (length(bad)>0){
+        if (length(bad) > 0){
             aln <- aln[-bad,,drop=FALSE]
         }
     }
@@ -378,6 +385,8 @@ runCrisprBowtie <- function(spacers,
 ){
     crisprNuclease <- .validateCrisprNuclease(crisprNuclease)
     pam.len  <- pamLength(crisprNuclease)
+    # print(pam_site)
+    # print(strand)
     gr <- GRanges(chr, IRanges(pam_site, width=1), strand=strand)
     gr <- promoters(gr, downstream=pam.len, upstream=0)
     return(gr)
