@@ -2,8 +2,26 @@ citEntry(
     entry = "article",
     author = "Luke Hoberecht and Pirunthan Perampalam and Aaron Lun and Jean-Philippe Fortin",
     title = "A comprehensive Bioconductor ecosystem for the design of CRISPR guide RNAs across nucleases and technologies",
-    journal = "bioRxiv",
+    journal = "Nature Communications",
+    volume="13",
+    number="1",
+    pages="6568",
     year = "2022",
-    textVersion = "Hoberecht L, Perampalam P, Lun A, Fortin JP. A comprehensive Bioconductor ecosystem for the design of CRISPR guide RNAs across nucleases and technologies. bioRxiv. 2022 Jan 1."
+    textVersion = "Hoberecht L, Perampalam P, Lun A, Fortin JP. A comprehensive Bioconductor ecosystem for the design of CRISPR guide RNAs across nucleases and technologies. Nature Communications. 2022 Nov 2;13(1):6568."
 )
+
+
+citEntry(
+  entry = "article",
+  title="Ultrafast and memory-efficient alignment of short DNA sequences to the human genome",
+  author="Langmead, Ben and Trapnell, Cole and Pop, Mihai and Salzberg, Steven L",
+  journal="Genome biology",
+  volume="10",
+  number="3",
+  pages="1--10",
+  year="2009",
+textVersion="Langmead B, Trapnell C, Pop M, Salzberg SL. Ultrafast and memory-efficient alignment of short DNA sequences to the human genome. Genome biology. 2009 Mar;10(3):1-0."
+)
+
+
 
